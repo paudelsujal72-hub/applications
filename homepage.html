@@ -1,0 +1,80 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Something New</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            margin: 0;
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1f2937;
+            margin-bottom: 24px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 16px;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .site {
+            background: linear-gradient(145deg, #ffffff, #f1f5f9);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 1px solid #e5e7eb;
+        }
+
+        .site:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.14);
+        }
+
+        .site img {
+            width: 56px;
+            height: 56px;
+            object-fit: contain;
+            margin-bottom: 10px;
+            padding: 8px;
+            background: #ffffff;
+            border-radius: 14px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .site a {
+            text-decoration: none;
+            color: #111827;
+            font-weight: 700;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Popular Websites</h1>
+    <div class="grid">
+        <div class="site"><a href="https://www.facebook.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=facebook.com" alt="Facebook"><div>Facebook</div></a></div>
+        <div class="site"><a href="https://www.instagram.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=instagram.com" alt="Instagram"><div>Instagram</div></a></div>
+        <div class="site"><a href="https://www.twitter.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=twitter.com" alt="Twitter"><div>Twitter</div></a></div>
+        <div class="site"><a href="https://www.linkedin.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=linkedin.com" alt="LinkedIn"><div>LinkedIn</div></a></div>
+        <div class="site"><a href="https://www.youtube.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=youtube.com" alt="YouTube"><div>YouTube</div></a></div>
+        <div class="site"><a href="https://www.netflix.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=netflix.com" alt="Netflix"><div>Netflix</div></a></div>
+        <div class="site"><a href="https://www.reddit.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=reddit.com" alt="Reddit"><div>Reddit</div></a></div>
+        <div class="site"><a href="https://www.pinterest.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=pinterest.com" alt="Pinterest"><div>Pinterest</div></a></div>
+        <div class="site"><a href="https://www.tiktok.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=tiktok.com" alt="TikTok"><div>TikTok</div></a></div>
+        <div class="site"><a href="https://www.snapchat.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=snapchat.com" alt="Snapchat"><div>Snapchat</div></a></div>
+        <div class="site"><a href="https://www.twitch.tv/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=twitch.tv" alt="Twitch"><div>Twitch</div></a></div>
+        <div class="site"><a href="https://www.discord.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=discord.com" alt="Discord"><div>Discord</div></a></div>
+    </div>
+</body>
+</html>
