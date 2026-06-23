@@ -579,7 +579,7 @@
 
             <!-- CTA -->
             <div class="cta-row">
-                <a href="download.html" class="btn-primary">⬇️ Download</a>
+                <a href="download.html" class="btn-secondary">⬇️ Download</a>
                 <a href="mailto:mail@gmail.com" class="btn-secondary">✉️ Say hello</a>
             </div>
 
@@ -622,16 +622,6 @@ function type() {
 }
 setTimeout(type, 1200);
 
-// ── CURSOR ──
-const cursor = document.getElementById('cursor');
-document.addEventListener('mousemove', e => {
-    cursor.style.left = e.clientX + 'px';
-    cursor.style.top = e.clientY + 'px';
-});
-document.querySelectorAll('a, button, .chip, .wave-badge, #secret-zone').forEach(el => {
-    el.addEventListener('mouseenter', () => cursor.classList.add('grow'));
-    el.addEventListener('mouseleave', () => cursor.classList.remove('grow'));
-});
 
 // ── COPY BUTTONS ──
 document.querySelectorAll('.copy-btn').forEach(btn => {
