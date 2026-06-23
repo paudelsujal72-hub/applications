@@ -28,8 +28,33 @@
         h1 {
             text-align: center;
             color: var(--text-color);
-            margin-bottom: 32px;
+            margin-bottom: 12px;
             font-size: 2.2rem;
+        }
+
+        /* Home Button Container & Styling */
+        .nav-container {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .home-btn {
+            display: inline-block;
+            background-color: #0f172a;
+            color: #ffffff;
+            padding: 12px 28px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+        }
+
+        .home-btn:hover {
+            background-color: #1e293b;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(15, 23, 42, 0.2);
         }
 
         .grid {
@@ -87,6 +112,11 @@
 <body>
 
     <h1>Popular Websites & Downloads</h1>
+
+    <!-- Go to Home Button -->
+    <div class="nav-container">
+        <a href="index.html" class="home-btn">Go to Home</a>
+    </div>
 
     <div class="grid">
         <div class="site download-card">
