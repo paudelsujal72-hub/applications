@@ -4,48 +4,91 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sujal Paudel</title>
-    <!-- Friendly and modern Google Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #f8fafc;
+            --ink: #0f172a;
+            --muted: #64748b;
+            --accent: #4f46e5;
+            --accent-light: #ede9fe;
+            --surface: #ffffff;
+            --border: #e2e8f0;
+            --green: #10b981;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-
-        html, body {
-            height: 100%;
-            width: 100%;
+            background: var(--bg);
+            color: var(--ink);
+            min-height: 100vh;
             overflow-x: hidden;
-            background-color: #f8fafc;
         }
 
-        /* Full Screen Container Split */
+        /* ── CURSOR ── */
+        .cursor {
+            width: 12px; height: 12px;
+            background: var(--accent);
+            border-radius: 50%;
+            position: fixed; top: 0; left: 0;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.15s ease, width 0.2s, height 0.2s, background 0.2s;
+            transform: translate(-50%, -50%);
+        }
+        .cursor.grow {
+            width: 36px; height: 36px;
+            background: rgba(79,70,229,0.15);
+        }
+
+        /* ── LOADER ── */
+        #loader {
+            position: fixed; inset: 0;
+            background: var(--ink);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        #loader.hidden { opacity: 0; visibility: hidden; }
+        .loader-text {
+            font-size: 1.5rem; font-weight: 700; color: #fff;
+            letter-spacing: 0.05em;
+        }
+        .loader-text span {
+            display: inline-block;
+            animation: pop 0.6s ease forwards;
+            opacity: 0;
+        }
+        @keyframes pop {
+            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translateY(12px); }
+        }
+
+        /* ── LAYOUT ── */
         .wrapper {
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            width: 100vw;
         }
-
         @media (min-width: 768px) {
-            .wrapper {
-                flex-direction: row;
-            }
+            .wrapper { flex-direction: row; }
         }
 
-        /* Left Side: Dynamic Full Image Section */
+        /* ── LEFT PANEL ── */
         .image-section {
             position: relative;
             flex: 1;
-            background-color: #e2e8f0;
-            min-height: 40vh;
+            min-height: 50vh;
+            overflow: hidden;
+            background: #0f172a;
         }
-
         @media (min-width: 768px) {
             .image-section {
                 height: 100vh;
@@ -53,197 +96,622 @@
                 top: 0;
             }
         }
-
         .profile-photo {
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             object-fit: cover;
+            opacity: 0.85;
+            transition: transform 0.6s ease, opacity 0.3s;
+        }
+        .image-section:hover .profile-photo {
+            transform: scale(1.03);
+            opacity: 1;
         }
 
-        /* Waving emoji on top of the image */
-        .wave-badge {
+        /* Overlay gradient */
+        .image-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(15,23,42,0.7) 0%, transparent 55%);
+            pointer-events: none;
+        }
+
+        /* Status pill */
+        .status-pill {
             position: absolute;
-            bottom: 20px;
-            right: 20px;
-            font-size: 2.5rem;
-            background: #ffffff;
-            padding: 10px;
-            border-radius: 50%;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            animation: wave-animation 2.5s infinite;
-            transform-origin: 70% 70%;
-        }
-
-        /* Right Side: Content Area */
-        .content-section {
-            flex: 1;
+            top: 20px; left: 20px;
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 100px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            padding: 40px;
-            background: linear-gradient(135deg, #fff5f5 0%, #f0f4ff 100%);
-            position: relative;
+            gap: 6px;
+            letter-spacing: 0.04em;
+        }
+        .status-dot {
+            width: 7px; height: 7px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
         }
 
+        /* Wave badge */
+        .wave-badge {
+            position: absolute;
+            bottom: 24px; right: 24px;
+            font-size: 2rem;
+            background: #ffffff;
+            padding: 10px 12px;
+            border-radius: 50%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: wave-animation 2.5s infinite;
+            transform-origin: 70% 70%;
+            cursor: default;
+            transition: transform 0.2s;
+        }
+        .wave-badge:hover { animation: none; transform: scale(1.2) rotate(-10deg); }
+        @keyframes wave-animation {
+            0%  { transform: rotate(0deg) }
+            10% { transform: rotate(14deg) }
+            20% { transform: rotate(-8deg) }
+            30% { transform: rotate(14deg) }
+            40% { transform: rotate(-4deg) }
+            50% { transform: rotate(10deg) }
+            60% { transform: rotate(0deg) }
+            100%{ transform: rotate(0deg) }
+        }
+
+        /* Name overlay on image */
+        .image-name {
+            position: absolute;
+            bottom: 28px; left: 24px;
+            color: #fff;
+        }
+        .image-name h2 {
+            font-size: 1.4rem; font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .image-name p { font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: 2px; }
+
+        /* ── RIGHT PANEL ── */
+        .content-section {
+            flex: 1;
+            padding: 40px 32px;
+            background: linear-gradient(160deg, #fff 0%, #f0f4ff 100%);
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+        }
         @media (min-width: 768px) {
             .content-section {
-                padding: 80px;
+                padding: 60px 64px;
+                overflow-y: auto;
                 height: 100vh;
             }
         }
 
-        .inner-content {
-            max-width: 500px;
-            width: 100%;
-            z-index: 2;
-        }
+        .inner-content { max-width: 520px; width: 100%; }
 
-        h1 {
-            font-size: 2.8rem;
-            font-weight: 700;
-            color: #0f172a;
-            margin-bottom: 12px;
-            letter-spacing: -1px;
-        }
-
-        .subtitle {
-            font-size: 1.2rem;
-            color: #4f46e5;
+        /* ── HEADER ── */
+        .greeting {
+            font-size: 0.85rem;
             font-weight: 600;
-            margin-bottom: 24px;
+            color: var(--accent);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            opacity: 0;
+            animation: fadeUp 0.5s 0.3s forwards;
         }
+        h1 {
+            font-size: clamp(2.2rem, 5vw, 3rem);
+            font-weight: 800;
+            color: var(--ink);
+            letter-spacing: -1.5px;
+            line-height: 1.1;
+            margin-bottom: 10px;
+            opacity: 0;
+            animation: fadeUp 0.5s 0.45s forwards;
+        }
+        .typewriter-wrap {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 20px;
+            min-height: 1.5em;
+            opacity: 0;
+            animation: fadeUp 0.5s 0.6s forwards;
+        }
+        #typewriter::after {
+            content: '|';
+            animation: blink 0.8s step-end infinite;
+        }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
 
         .intro-text {
-            font-size: 1.05rem;
-            line-height: 1.7;
+            font-size: 1rem;
+            line-height: 1.75;
             color: #475569;
-            margin-bottom: 40px;
+            margin-bottom: 36px;
+            opacity: 0;
+            animation: fadeUp 0.5s 0.75s forwards;
         }
 
-        /* Casual Grid Box for Contact Info */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── SKILLS CHIPS ── */
+        .section-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--muted);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 36px;
+        }
+        .chip {
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            background: var(--accent-light);
+            color: var(--accent);
+            border: 1px solid #c7d2fe;
+            cursor: default;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .chip:hover {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        /* ── CONTACT CARD ── */
         .contact-box {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(226, 232, 240, 0.8);
+            background: var(--surface);
+            border: 1px solid var(--border);
             border-radius: 20px;
             padding: 24px;
-            margin-bottom: 40px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+            margin-bottom: 32px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.04);
         }
-
         .contact-row {
             display: flex;
-            margin-bottom: 16px;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.95rem;
+            transition: background 0.2s;
+        }
+        .contact-row:last-child { border-bottom: none; padding-bottom: 0; }
+        .contact-row:first-child { padding-top: 0; }
+        .contact-icon {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            background: var(--accent-light);
+            display: flex; align-items: center; justify-content: center;
             font-size: 1rem;
-        }
-
-        .contact-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .contact-label {
-            font-weight: 700;
-            color: #64748b;
-            width: 100px;
             flex-shrink: 0;
         }
-
-        .contact-value a, .contact-value span {
-            color: #3b82f6;
+        .contact-label { font-weight: 700; color: var(--muted); width: 60px; flex-shrink: 0; font-size: 0.82rem; }
+        .contact-value a {
+            color: var(--ink);
             text-decoration: none;
             font-weight: 500;
             transition: color 0.2s;
         }
+        .contact-value a:hover { color: var(--accent); }
+        .contact-value span { color: var(--ink); font-weight: 500; }
 
-        .contact-value span {
-            color: #334155;
-        }
-
-        .contact-value a:hover {
-            color: #1d4ed8;
-            text-decoration: underline;
-        }
-
-        /* Fun, Friendly Call to Action Button */
-        .cta-btn {
-            display: inline-block;
-            background-color: #0f172a;
-            color: #ffffff;
-            padding: 16px 32px;
-            border-radius: 16px;
-            text-decoration: none;
+        /* Copy button */
+        .copy-btn {
+            margin-left: auto;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.78rem;
+            color: var(--muted);
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            font-family: inherit;
             font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.2s ease;
-            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.15);
         }
+        .copy-btn:hover { background: var(--accent-light); color: var(--accent); }
+        .copy-btn.copied { color: var(--green); }
 
-        .cta-btn:hover {
-            background-color: #1e293b;
+        /* ── MOOD TOGGLE ── */
+        .mood-section {
+            margin-bottom: 32px;
+        }
+        .mood-grid {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .mood-btn {
+            padding: 8px 16px;
+            border-radius: 12px;
+            border: 1.5px solid var(--border);
+            background: var(--surface);
+            font-family: inherit;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--muted);
+        }
+        .mood-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .mood-btn.active {
+            background: var(--ink);
+            color: #fff;
+            border-color: var(--ink);
+        }
+        .mood-response {
+            margin-top: 12px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            background: var(--accent-light);
+            border: 1px solid #c7d2fe;
+            font-size: 0.9rem;
+            color: #3730a3;
+            font-weight: 500;
+            min-height: 48px;
+            transition: all 0.3s;
+            display: none;
+        }
+        .mood-response.visible { display: block; }
+
+        /* ── CTA BUTTONS ── */
+        .cta-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--ink);
+            color: #fff;
+            padding: 14px 28px;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            box-shadow: 0 4px 16px rgba(15,23,42,0.18);
+        }
+        .btn-primary:hover {
+            background: #1e293b;
             transform: translateY(-2px);
-            box-shadow: 0 12px 24px rgba(15, 23, 42, 0.2);
+            box-shadow: 0 8px 24px rgba(15,23,42,0.22);
+        }
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface);
+            color: var(--ink);
+            padding: 14px 28px;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            border: 1.5px solid var(--border);
+        }
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
         }
 
-        /* Waving Hand Keyframes */
-        @keyframes wave-animation {
-            0% { transform: rotate( 0.0deg) }
-           10% { transform: rotate(14.0deg) }
-           20% { transform: rotate(-8.0deg) }
-           30% { transform: rotate(14.0deg) }
-           40% { transform: rotate(-4.0deg) }
-           50% { transform: rotate(10.0deg) }
-           60% { transform: rotate( 0.0deg) }
-          100% { transform: rotate( 0.0deg) }
+        /* ── MINI EASTER EGG ── */
+        #secret-zone {
+            margin-top: 48px;
+            text-align: center;
+            color: #cbd5e1;
+            font-size: 0.78rem;
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.2s;
+        }
+        #secret-zone:hover { color: var(--muted); }
+        #confetti-canvas {
+            position: fixed; inset: 0;
+            pointer-events: none;
+            z-index: 500;
+        }
+
+        /* ── DARK MODE ── */
+        body.dark {
+            --bg: #0f172a;
+            --ink: #f1f5f9;
+            --muted: #94a3b8;
+            --surface: #1e293b;
+            --border: #334155;
+            --accent-light: #1e1b4b;
+        }
+        body.dark .content-section {
+            background: linear-gradient(160deg, #0f172a 0%, #111827 100%);
+        }
+        .dark-toggle {
+            position: fixed;
+            top: 20px; right: 20px;
+            z-index: 100;
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: 50%;
+            width: 42px; height: 42px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        }
+        .dark-toggle:hover { transform: scale(1.1); }
+
+        /* scrollbar */
+        .content-section::-webkit-scrollbar { width: 4px; }
+        .content-section::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+        /* divider */
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 32px 0;
         }
     </style>
 </head>
 <body>
 
-    <div class="wrapper">
-        
-        <!-- Left Side: Massive, beautiful photo section -->
-        <div class="image-section">
-            <img src="profile.jpg" alt="Sujal Paudel" class="profile-photo">
-            <div class="wave-badge">👋</div>
+<!-- Loader -->
+<div id="loader">
+    <div class="loader-text" id="loader-text"></div>
+</div>
+
+<!-- Custom Cursor -->
+<div class="cursor" id="cursor"></div>
+
+<!-- Dark Mode Toggle -->
+<button class="dark-toggle" id="darkToggle" title="Toggle dark mode">🌙</button>
+
+<!-- Confetti Canvas -->
+<canvas id="confetti-canvas"></canvas>
+
+<div class="wrapper">
+
+    <!-- LEFT PANEL -->
+    <div class="image-section">
+        <img src="profile.jpg" alt="Sujal Paudel" class="profile-photo">
+        <div class="image-overlay"></div>
+        <div class="status-pill">
+            <span class="status-dot"></span> Available to connect
         </div>
-
-        <!-- Right Side: Friendly Full-Screen Presentation -->
-        <div class="content-section">
-            <div class="inner-content">
-                
-                <h1>Sujal Paudel</h1>
-                <p class="subtitle">LEARNER</p>
-
-                <p class="intro-text">
-                    Hi i am sujal. 
-                    welcome to my page 
-                    you will find nothing here 
-                    this website is only made for fun and learning purpose.
-                </p>
-
-                <!-- Information Dashboard -->
-                <div class="contact-box">
-                    <div class="contact-row">
-                        <span class="contact-label">Email</span>
-                        <span class="contact-value"><a href="mailto:mail@gmail.com">mail@gmail.com</a></span>
-                    </div>
-                    <div class="contact-row">
-                        <span class="contact-label">Call me</span>
-                        <span class="contact-value"><a href="tel:9800000000">9800000000</a></span>
-                    </div>
-                    <div class="contact-row">
-                        <span class="contact-label">Based in</span>
-                        <span class="contact-value"><span>Kathmandu, Nepal</span></span>
-                    </div>
-                </div>
-
-                <!-- Connect CTA changed to Download -->
-                <a href="download.html" class="cta-btn">Download</a>
-
-            </div>
+        <div class="image-name">
+            <h2>Sujal Paudel</h2>
+            <p>Kathmandu, Nepal 🇳🇵</p>
         </div>
-
+        <div class="wave-badge" title="Wave back!">👋</div>
     </div>
 
+    <!-- RIGHT PANEL -->
+    <div class="content-section">
+        <div class="inner-content">
+
+            <p class="greeting">Hey there 👀</p>
+            <h1>I'm Sujal<br>Paudel.</h1>
+
+            <div class="typewriter-wrap">
+                <span id="typewriter"></span>
+            </div>
+
+            <p class="intro-text">
+                Welcome to my little corner of the internet. This page is made for fun and learning — there's no grand portfolio here, just a curious person exploring the web, one line of code at a time.
+            </p>
+
+            <!-- Skills -->
+            <p class="section-label">Exploring</p>
+            <div class="chips">
+                <span class="chip">HTML & CSS</span>
+                <span class="chip">JavaScript</span>
+                <span class="chip">Learning by doing</span>
+                <span class="chip">Web design</span>
+                <span class="chip">Problem solving</span>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Contact -->
+            <p class="section-label">Get in touch</p>
+            <div class="contact-box">
+                <div class="contact-row">
+                    <div class="contact-icon">📧</div>
+                    <span class="contact-label">Email</span>
+                    <span class="contact-value"><a href="mailto:mail@gmail.com">mail@gmail.com</a></span>
+                    <button class="copy-btn" data-copy="mail@gmail.com">Copy</button>
+                </div>
+                <div class="contact-row">
+                    <div class="contact-icon">📞</div>
+                    <span class="contact-label">Phone</span>
+                    <span class="contact-value"><a href="tel:9800000000">9800000000</a></span>
+                    <button class="copy-btn" data-copy="9800000000">Copy</button>
+                </div>
+                <div class="contact-row">
+                    <div class="contact-icon">📍</div>
+                    <span class="contact-label">Based in</span>
+                    <span class="contact-value"><span>Kathmandu, Nepal</span></span>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Mood Picker -->
+            <p class="section-label">What brings you here?</p>
+            <div class="mood-section">
+                <div class="mood-grid">
+                    <button class="mood-btn" data-mood="just-looking">👀 Just looking</button>
+                    <button class="mood-btn" data-mood="say-hi">👋 Wanna say hi</button>
+                    <button class="mood-btn" data-mood="learn">📚 Learn something</button>
+                    <button class="mood-btn" data-mood="lost">🗺️ Totally lost</button>
+                </div>
+                <div class="mood-response" id="mood-response"></div>
+            </div>
+
+            <!-- CTA -->
+            <div class="cta-row">
+                <a href="download.html" class="btn-primary">⬇️ Download</a>
+                <a href="mailto:mail@gmail.com" class="btn-secondary">✉️ Say hello</a>
+            </div>
+
+            <!-- Easter Egg -->
+            <div id="secret-zone">· · · click here for a surprise · · ·</div>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+// ── LOADER ──
+const loaderText = document.getElementById('loader-text');
+const chars = 'Sujal Paudel'.split('');
+chars.forEach((c, i) => {
+    const s = document.createElement('span');
+    s.textContent = c === ' ' ? '\u00a0' : c;
+    s.style.animationDelay = `${i * 0.06}s`;
+    loaderText.appendChild(s);
+});
+setTimeout(() => {
+    document.getElementById('loader').classList.add('hidden');
+}, chars.length * 60 + 600);
+
+// ── TYPEWRITER ──
+const phrases = ['A Learner.', 'A Builder.', 'Curious about the web.', 'Someone who loves exploring.'];
+let pi = 0, ci = 0, deleting = false;
+const tw = document.getElementById('typewriter');
+function type() {
+    const phrase = phrases[pi];
+    if (!deleting) {
+        tw.textContent = phrase.slice(0, ++ci);
+        if (ci === phrase.length) { deleting = true; setTimeout(type, 1600); return; }
+    } else {
+        tw.textContent = phrase.slice(0, --ci);
+        if (ci === 0) { deleting = false; pi = (pi + 1) % phrases.length; }
+    }
+    setTimeout(type, deleting ? 40 : 85);
+}
+setTimeout(type, 1200);
+
+// ── CURSOR ──
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+});
+document.querySelectorAll('a, button, .chip, .wave-badge, #secret-zone').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('grow'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('grow'));
+});
+
+// ── COPY BUTTONS ──
+document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        navigator.clipboard.writeText(btn.dataset.copy).then(() => {
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
+        });
+    });
+});
+
+// ── MOOD PICKER ──
+const moods = {
+    'just-looking': "Cool! Feel free to poke around. There's not much, but what's here is made with ❤️",
+    'say-hi': "Hi!! 👋 Drop Sujal a message — he'd love to hear from you!",
+    'learn': "Awesome! Sujal's learning too. We're all figuring it out together. 🚀",
+    'lost': "Ha, same honestly. But hey, you found this page — that counts for something! 🗺️"
+};
+const moodResponse = document.getElementById('mood-response');
+document.querySelectorAll('.mood-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        moodResponse.textContent = moods[btn.dataset.mood];
+        moodResponse.classList.add('visible');
+    });
+});
+
+// ── DARK MODE ──
+const darkToggle = document.getElementById('darkToggle');
+darkToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+    darkToggle.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+});
+
+// ── CONFETTI EASTER EGG ──
+const canvas = document.getElementById('confetti-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let running = false;
+
+function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+resize();
+window.addEventListener('resize', resize);
+
+function Particle() {
+    this.x = Math.random() * canvas.width;
+    this.y = -10;
+    this.r = Math.random() * 7 + 4;
+    this.color = `hsl(${Math.random() * 360}, 80%, 60%)`;
+    this.vx = (Math.random() - 0.5) * 4;
+    this.vy = Math.random() * 4 + 2;
+    this.spin = (Math.random() - 0.5) * 0.3;
+    this.angle = 0;
+    this.life = 1;
+}
+
+function animateConfetti() {
+    if (!running) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach((p, i) => {
+        p.x += p.vx; p.y += p.vy; p.angle += p.spin; p.life -= 0.008;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.angle);
+        ctx.globalAlpha = Math.max(0, p.life);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.r / 2, -p.r / 2, p.r, p.r * 0.5);
+        ctx.restore();
+    });
+    particles = particles.filter(p => p.life > 0 && p.y < canvas.height + 20);
+    if (particles.length === 0) { running = false; ctx.clearRect(0, 0, canvas.width, canvas.height); }
+    else requestAnimationFrame(animateConfetti);
+}
+
+document.getElementById('secret-zone').addEventListener('click', () => {
+    for (let i = 0; i < 180; i++) particles.push(new Particle());
+    if (!running) { running = true; animateConfetti(); }
+});
+</script>
 </body>
 </html>
