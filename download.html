@@ -34,7 +34,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;paddin
 .hero-dots{
   position:absolute;inset:0;
   background-image:radial-gradient(circle,rgba(255,255,255,0.08) 1px,transparent 1px);
-  background-size:28px 28px
+  background-size:28px 28px;
+  pointer-events:none;
 }
 .hero-glow{
   position:absolute;top:-80px;left:50%;transform:translateX(-50%);
@@ -147,7 +148,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;paddin
     <div class="stat-chip"><strong>12</strong> Websites</div>
     <div class="stat-chip"><strong>4</strong> Categories</div>
   </div>
-  <a href="https://www.sujal10.com.np" class="home-btn">
+  <a href="https://www.sujal10.com.np" target="_blank" rel="noopener noreferrer" class="home-btn" aria-label="Back to Home">
     <i class="ti ti-arrow-left" style="font-size:15px" aria-hidden="true"></i> Back to Home
   </a>
 </div>
